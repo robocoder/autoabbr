@@ -92,6 +92,7 @@
 		var text = el.nodeValue;
 		var charset = preparedWords;
 		var word = '';
+		var saved = {};
 		var key = ''; // used for wildcards so we know what word we had
 
 		for (i=0, l=text.length; i<l; i++) {
@@ -100,14 +101,21 @@
 			if (charset.hasOwnProperty(letter)) { // a valid character in the charset, add it to the word and keep going
 				charset = charset[letter];
 				word += letter;
+				// save the longest match
+				if (charset.word) {
+					saved = { i: i + 1, word: word, key: key || word };
+				}
 			} else if (letter.match(/^\W$/)) { // Not text, and not in the character set, stop.
 				// a charset terminates at this point, so we've found a word
 				if (charset.word) {
 					foundWords.push({ i: i, word: word, key: key || word });
+				} else if (saved.word) {
+					foundWords.push(saved);
 				}
 				// word is over, so reset word and charset
 				key = '';
 				word = '';
+				saved = {};
 				charset = preparedWords;
 			} else if (charset.hasOwnProperty('*')) { // Wildcards, match anything until we find a \W
 				charset = { '*': true, word: true };
@@ -122,6 +130,8 @@
 		}
 		if (charset.word) { // We ended on a successful word
 			foundWords.push({ i: i, word: word, key: key || word });
+		} else if (saved.word) {
+			foundWords.push(saved);
 		}
 
 		if (foundWords.length) {
