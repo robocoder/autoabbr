@@ -5,5 +5,7 @@
 	"ante": "test word 4",
 	"vitae": "test word 5",
 	"placerat mollis": "test multi word",
-	"cura*": "test wildcard"
+	"cura*": "test wildcard",
+	"ligula": "partial match",
+	"ligula venenatis": "multi word"
 }
